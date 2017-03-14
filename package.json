@@ -16,8 +16,8 @@
     "lodash": "^4.16.2",
     "lodash-deep": "^2.0.0",
     "moment": "^2.13.0",
-    "reef-client": "^1.0.0-beta.5",
-    "reef-service": "^1.0.0-beta.5",
+    "reef-client": "^1.0.0-beta.6",
+    "reef-service": "^1.0.0-beta.7",
     "request": "^2.81.0"
   },
   "devDependencies": {
