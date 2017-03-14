@@ -1,11 +1,48 @@
-import axios from 'axios'
+import request from 'request';
+import messageIcon from '../conventions/messageIcon';
 
-function sendMessage(text, config, index) {
+export default function (event, config, state) {
     
-    let { SLACK_TOKEN, SLACK_CHANNEL } = config;
+    let { stream, type, ocurredTs, data } = event,
+        { SLACK_TOKEN, SLACK_CHANNEL } = config,
+        { bunyan } = state,
+        fields = [];
+    
+    bunyan.info('sending event to slack channel', event.stream, event.type);
+    
+    if(data) {
+        fields = Object.keys(data).map(key => {
+            return {
+                "title": key,
+                "value": data[key],
+                "short": false
+            }
+        });
+    };
 
-    return axios.post(`https://slack.com/api/chat.postMessage?token=${ SLACK_TOKEN }&pretty=1&channel=${ SLACK_CHANNEL }&text=${JSON.stringify(text)}`);
+    return new Promise ((resolve, reject) => {
+        request.post({
+            json: true,
+            url: 'https://slack.com/api/chat.postMessage',
+            qs: {
+                "token": SLACK_TOKEN,
+                "channel": SLACK_CHANNEL,
+                "text": event.stream,
+                "icon_url": messageIcon(stream),
+                "attachments": JSON.stringify([
+                    {
+                        "title": event.type,
+                        "text": new Date(event.ocurredTs),
+                        "fields": fields
+                    }
+                ]),
+            },
+        },
+        (err, resp, body) => {
+            if (body.ok) 
+                resolve();
+            
+            reject(body.error);
+        });
+    });
 }
-
-
-export default sendMessage

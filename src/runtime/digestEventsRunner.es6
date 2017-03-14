@@ -1,23 +1,36 @@
 import sendMessage from './sendMessage';
 
-import series from 'series';
-
-
 export default async function (config, state, cmdParams) {
 		
 	let { bunyan, reefClient } = state,
 		{ REEF_CHECKPOINT } = config,
-		{ events } = cmdParams;
+		{ events } = cmdParams,
+		totalSuccessfullySent = 0;
+
+	bunyan.info('processing [DIGEST_EVENTS] command', cmdParams);
 
 	try {
 
-		let promises = events.map((event, index) => sendMessage(event, config, index));
+		bunyan.info('mapping events to slack messages');
 
-		await series(promises);
+		let promises = events.map(event => sendMessage(event, config, state));
 
-		console.log("Success");
+		promises.forEach(async (promise) => {
+			try {
+				await promise;
+				totalSuccessfullySent += 1;				
+			} catch (err) {
+				bunyan.error(err);
+			}
+		});
+
+		bunyan.info('return success of all events sent to slack channel');
+
+		return { totalSuccessfullySent, totalEvents: events.length };
 		
 	} catch (err) {
+
+		bunyan.error(err);
 
 		throw err;
 
