@@ -33,7 +33,8 @@ export default function (event, config, state) {
                     {
                         "title": event.type,
                         "text": new Date(event.ocurredTs),
-                        "fields": fields
+                        "fields": fields,
+                        "color": (stream.includes("error")) ? '#ff0000' : null,
                     }
                 ]),
             },
