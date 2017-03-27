@@ -3,11 +3,7 @@ import digestEventsRunner from './digestEventsRunner';
 
 export default async function (config, state) {
 
-	let { bunyan, reefClient, reefService } = state;
-
-	bunyan.info('starting up reef client');
-
-	await reefClient.start();
+	let { bunyan, reefService } = state;
 
 	bunyan.info('hooking reef runners');
 

@@ -18,14 +18,6 @@ export async function setupStateAsync(config) {
 		serviceLane: config.REEF_PULSE_LANE
 	}, bunyan);
 
-	let reefClient = await setupReefClientAsync({
-		region: config.AWS_REGION,
-		accessKeyId: config.AWS_ACCESSKEYID,
-		secretAccessKey: config.AWS_SECRETACCESSKEY,
-		clientDomain: config.REEF_CLIENT_DOMAIN,
-		clientLane: config.REEF_CLIENT_LANE
-	}, bunyan);
-
-	return { bunyan, reefService, reefClient };
+	return { bunyan, reefService };
 
 }

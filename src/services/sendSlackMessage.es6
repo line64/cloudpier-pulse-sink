@@ -1,8 +1,7 @@
 import request from 'request';
 import messageIcon from '../conventions/messageIcon';
 
-export default function (event, config, state) {
-    
+export default function (config, state, event) {
     let { stream, type, ocurredTs, data } = event,
         { SLACK_TOKEN, SLACK_CHANNEL } = config,
         { bunyan } = state,
