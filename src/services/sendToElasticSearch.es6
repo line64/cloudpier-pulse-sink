@@ -8,15 +8,26 @@ export default async function (config, state, event) {
     bunyan.info('sending event to elasticsearch', { stream, type, ocurredTs });
     
     try {
-        const res = await fetch(`${ELASTICSEARCH_ENDPOINT}/${stream}/${type}/`, {
-            method: 'POST',
-            body: JSON.stringify({ ocurredTs, data }),
+        const url = `${ELASTICSEARCH_ENDPOINT}/${stream}/${type}/`;
+
+        const body = JSON.stringify({
+            timestamp: new Date(ocurredTs).toISOString(),
+            ...data
         });
 
-        if (res.ok) {
+        bunyan.info('sending elastic search API call', { url, body });
+
+        const res = await fetch(url, {
+            method: 'POST',
+            body,
+        });
+
+        if (!res.ok) {
+            bunyan.error(res.json());
             throw new Error('Unable to post event to elastic search');
         }
     } catch (err) {
-        throw new Error('Unable to post event to elastic search');
+        bunyan.error(err, 'error while sending to ElasticSearch');
+        throw err;
     }
 }
