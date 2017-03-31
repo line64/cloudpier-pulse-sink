@@ -2,7 +2,8 @@ import sendSlackMessage from '../services/sendSlackMessage';
 import sendToElasticSearch from '../services/sendToElasticSearch';
 
 async function processSingleEvent(config, state, event) {
-	await sendSlackMessage(config, state, event);
+	if(event.stream.includes("error")) 
+		await sendSlackMessage(config, state, event);
 	await sendToElasticSearch(config, state, event);
 }
 
